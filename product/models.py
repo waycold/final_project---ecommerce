@@ -1,66 +1,52 @@
+from unicodedata import category
+from django.conf import settings
 from django.db import models
-from io import BytesIO
-from PIL import Image
-from django.core.files import File
+from django.shortcuts import reverse
 
-# Create your models here.
+CATEGORY_CHOICES = (
+    ('CPU', 'Central Processing Unit'),
+    ('RAM', 'Random Access Memory'),
+    ('GPU', 'Graphics Processing Unit')
+)
 
-class Category(models.Model):
-    name = models.CharField(max_length = 255)
+LABEL_CHOICES = (
+    ('P', 'primary'),
+    ('S', 'secondary'),
+    ('D', 'danger')
+)
+
+
+
+class Item(models.Model):
+    tittle = models.CharField(max_length = 100)
+    price = models.DecimalField(max_digits=5, decimal_places= 0)
+    category = models.CharField(choices = CATEGORY_CHOICES, max_length = 5)
+    label = models.CharField(choices = LABEL_CHOICES, max_length = 5)
     slug = models.SlugField()
 
-    class Meta:
-        ordering = ('name',)
-
     def __str__(self):
-        return self.name
+        return self.tittle
 
     def get_absolute_url(self):
-        return f'/{self.slug}/'
+        return reverse("product:product", kwargs={
+            'slug': self.slug
+        } )
 
-class Product(models.Model):
-    Category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
-    name = models.CharField(max_length = 255)
-    slug = models.SlugField()
-    description = models.TextField(blank=True, null=True)
-    prices = models.DecimalField(max_digits=6, decimal_places=2)
-    image = models.ImageField(upload_to='uploads/', blank=True, null=True)
-    thumbnail = models.ImageField(upload_to='uploads/', blank=True, null=True)
-    date_added = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ('-date_added',)
+class OrderItem(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+
 
     def __str__(self):
-        return self.name
+        return self.tittle
 
-    def get_absolute_url(self):
-        return f'/{self.Category.slug}/{self.slug}/'
+class Order(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    items = models.ManyToManyField(OrderItem)
+    start_date = models.DateTimeField(auto_now_add = True)
+    ordered_date = models.DateTimeField()
+    ordered = models.BooleanField(default=False)
 
-    def get_image(self):
-        if self.image:
-            return 'http://127.0.0.1:8000' + self.image.url
-        return ''
 
-    def get_thumbnail(self):
-        if self.thumbnail:
-            return 'http://127.0.0.1:8000' + self.image.url
-        else: 
-            if self.image:
-                self.thumbnail = self.make_thumbnail(self.image)
-                self.save()
-                return 'http://127.0.0.1:8000' + self.image.url
-            else:
-                return ''
-
-    def make_thumbnail(self, image, size=(300, 200)):
-        img = Image.open(image)
-        img.convert('RGB')
-        img.thumbnail(size)
-
-        thumb_io = BytesIO()
-        img.save(thumb_io, 'JPEG', quality=85)
-
-        thumbnail = File(thumb_io, name=image.name)
-
-        return thumbnail
+    def __str__(self):
+        return self.username

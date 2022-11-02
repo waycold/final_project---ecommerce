@@ -4,9 +4,15 @@
 
 {{error}}
 
-<h1>signup</h1>
+<div>
+    
+    <div style="margin: 100px 10px 70px; background-color: #ace0ffe7; display: inline-block; padding: 15px 5% 15px 20px;">
+        <h1> 
+            <b>Sign up</b>
+        </h1>
+    </div>
 
-<form action="/signup/" method="POST">
+<form action="/signup/" method="POST" style="padding: 15px;">
     {% csrf_token %}
     
     {{form.as_p}}
@@ -15,6 +21,6 @@
         signup
     </button>
 </form>
-
+</div>
 
 {% endblock %}

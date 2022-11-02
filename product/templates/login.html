@@ -2,13 +2,17 @@
 
 {% block content %}
 
-<h1>
-    log in
+
+<div style="margin: 100px 10px 70px; background-color: #ace0ffe7; display: inline-block; padding: 15px 5% 15px 20px;">
+    <h1>
+        <b>Log in</b>
 </h1>
+</div>
+
 
 {{error}}
 
-<form action="/login/" method="POST">
+<form action="/login/" method="POST" style="padding: 15px;">
     {% csrf_token %}
     {{form.as_p}}
 

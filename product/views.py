@@ -3,17 +3,35 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
 from django.db import IntegrityError
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from product.models import Product
-from product.serializers import ProductSerializer
+from product.models import Item
+from django.views.generic import ListView, DetailView
 
 
 
 # home render
 
 def home(request):
-    return render(request, 'home.html')
+    context = {
+        'items': Item.objects.all()
+    }
+    return render(request, 'home.html', context)
+    
+
+class HomeView(ListView):
+    model = Item
+    template_name = "home.html"
+
+
+class ItemDetailView(DetailView):
+    model = Item
+    template_name = "product.html"
+
+
+def products(request):
+    context = {
+        'items': Item.objects.all()
+    }
+    return render(request, 'product.html', context)
 
 # sign up function
 
@@ -42,7 +60,7 @@ def sign_up(request):
 
 def log_out(request):
     logout(request)
-    return redirect('home')
+    return redirect('/')
 
 
 # log in function
@@ -59,10 +77,8 @@ def log_in(request):
             'error': 'User or password is incorrect'})
         else:
             login(request, user)
-            return redirect('home')
+            return redirect('/')
 
-class LatestProductsList(APIView):
-    def get(self, request, format=None):
-        products = Product.objects.all()[0:4]
-        serializer = ProductSerializer(products, many= True)
-        return Response(serializer.data) 
+
+def about(request):
+    return render(request, 'about.html')
