@@ -1,26 +1,31 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
 
-{% block content %}
+<link href="/product/static/css/login.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@100&display=swap" rel="stylesheet">
 
-{{error}}
+<div id="logo">
+  <h1 class="logo">
+    Store
+  </h1>
+  <img src="\uploads\1250593.png" alt="" class="img-logo">
+</div>
 
-<div>
-    
-    <div style="margin: 100px 10px 70px; background-color: #ace0ffe7; display: inline-block; padding: 15px 5% 15px 20px;">
-        <h1> 
-            <b>Sign up</b>
-        </h1>
-    </div>
-
-<form action="/signup/" method="POST" style="padding: 15px;">
+<div id="base">
+  <h1>
+    <b>Sign up</b>
+  </h1>
+  <form action="/signup/" method="POST" style="padding: 15px">
     {% csrf_token %}
-    
+
+    <p style="color: rgb(97, 178, 245)">{{error}}</p>
+
     {{form.as_p}}
 
-    <button>
-        signup
-    </button>
-</form>
+    <button>signup</button>
+  </form>
 </div>
 
 {% endblock %}
+
+
