@@ -92,6 +92,26 @@ def about(request):
 
 
 def store(request):
+    order_qs = OrderItem.objects.filter(
+        user = request.user,
+        ordered = False
+    )
+    qs = request.POST.get("delete")
+    if "delete" in request.POST:
+        print("work")
+        items = order_qs.delete()
+        context = {
+            'orderitems': items
+        }
+        return redirect('/checkout/')
+    if "buy" in request.POST and order_qs.count() >= 1:
+        print(order_qs)
+        items = order_qs.delete()
+        context = {
+            'orderitems': items
+        }
+        messages.info(request, "Your purchase has been successful!")
+        return redirect ('/')
     context = {
         'items': Item.objects.all(),
         'orderitems': OrderItem.objects.all()
@@ -260,3 +280,46 @@ def remove_from_cart(request, slug):
     else:
         messages.info(request, "You do not have an active order")
         return redirect("product:product", slug=slug)
+
+
+# def delete(request, slug):
+#     item = get_object_or_404(Item, slug=slug)
+#     order_qs = Order.objects.filter(
+#         user=request.user,
+#         ordered=False
+#     )
+#     if order_qs.exists():
+#         order = order_qs[0]
+#         # check if the order item is in the order
+#         if order.items.filter(item__slug=item.slug).exists():
+#             order_item = OrderItem.objects.filter(
+#                 item=item,
+#                 user=request.user,
+#                 ordered=False
+#             )[0]
+#             order.items.remove(order_item)
+#             order_item.delete()
+#             messages.info(request, "This item was removed from your cart.")
+#             return redirect("product:checkout")
+#         else:
+#             messages.info(request, "This item was not in your cart")
+#             return redirect("product:checkout", slug=slug)
+#     else:
+#         messages.info(request, "You do not have an active order")
+#         return redirect("product:checkout", slug=slug)
+
+def delete(request):
+    order_qs = OrderItem.objects.filter(
+        user = request.user,
+        ordered = False
+    )
+    qs = request.POST.get("delete")
+    print("work2")
+    if qs:
+        print("work")
+        items1 = order_qs.remove()
+        items2 = order_qs.delete()
+        context = {
+            'orderitems': items2
+        }
+        return render(request, "checkout.html", context)
