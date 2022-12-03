@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate, get_user_model
 from django.db import IntegrityError
 from django.db.models import Q
-from product.models import Item, OrderItem, Order, Profile
-from product.forms import profile_edit_form
+from product.models import Item, OrderItem, Order, Profile, Comments
+from product.forms import profile_edit_form, comments_form
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
@@ -27,9 +27,37 @@ class ItemDetailView(DetailView):
     template_name = "product.html"
 
 
-def products(request):
+def products(request, slug):
+    input = "-"
+    output = " "
+    change = str.maketrans(input, output)
+    id = slug
+    modifed_slug = id.translate(change)
+    modifed_slug = modifed_slug.capitalize()
+    items = Item.objects.filter(
+        tittle__icontains = modifed_slug
+    )
+    comments = Comments.objects.filter(
+        url = request.path
+    )
+    if "submit" in request.POST:
+        date_adedd = timezone.now()
+        Comments.objects.create(
+            user = request.user,
+            body = request.POST['body'],
+            date_adedd = date_adedd,
+            url = request.path
+        )
+        context = {
+            'items': items,
+            'comments': comments,
+            'form': comments_form,
+        }
+        return render(request, 'product.html', context)
     context = {
-        'items': Item.objects.all()
+        'items': items,
+        'comments': comments,
+        'form': comments_form,
     }
     return render(request, 'product.html', context)
 
@@ -98,7 +126,6 @@ def store(request):
     )
     qs = request.POST.get("delete")
     if "delete" in request.POST:
-        print("work")
         items = order_qs.delete()
         context = {
             'orderitems': items
@@ -114,7 +141,8 @@ def store(request):
         return redirect ('/')
     context = {
         'items': Item.objects.all(),
-        'orderitems': OrderItem.objects.all()
+        'orderitems': order_qs,
+        'comments': Comments.objects.all()
     }
     return render(request, 'checkout.html', context)
 
@@ -190,11 +218,13 @@ def add_to_cart(request, slug):
         else:
             messages.info(request, "This item was added to your cart")
             order.items.add(order_item)
+            Item.objects.update()
 
     else:
         ordered_date = timezone.now()
         order = Order.objects.create(user= request.user, ordered_date=ordered_date)
         order.items.add(order_item)
+        Item.objects.update(in_cart=True)
         messages.info(request, "This item was added to your cart")
     return redirect("product:product", slug=slug
     )

@@ -24,7 +24,6 @@ class Item(models.Model):
     label = models.CharField(choices = LABEL_CHOICES, max_length = 5, null=True, blank= True)
     slug = models.SlugField()
     img = models.ImageField(upload_to='products/', null=True)
-    
 
     def __str__(self):
         return self.tittle
@@ -39,12 +38,6 @@ class Item(models.Model):
             'slug': self.slug
         } )
 
-
-    def get_delte_url(self):
-        return reverse("product:delete", kwargs={
-            'slug': self.slug
-        } )
-
     def get_remove_from_cart_url(self):
         return reverse("product:remove_from_cart", kwargs={
             'slug': self.slug
@@ -56,9 +49,9 @@ class OrderItem(models.Model):
     ordered = models.BooleanField(default=False)
     quantity= models.IntegerField(default=1)
 
-
     def __str__(self):
         return f"{self.quantity} of {self.item.tittle}"
+
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -89,3 +82,12 @@ class Profile(models.Model):
             'username': self.username.username
         } )
 
+class Comments(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField()
+    date_adedd = models.TimeField(auto_now_add=True)
+    url = models.URLField(max_length=200)
+    likes = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"comment of {self.user}"

@@ -11,7 +11,8 @@
         <!--Grid column-->
         <div class="col-md-6 mb-4" style="display: flex; justify-content: center; justify-items: center;">
 
-          <img src="/uploads/{{ item.img }}" class="img-fluid" alt="image not found"  style="height: 250px;">
+          {% for object in items %}
+          <img src="/uploads/{{ object.img }}" class="img-fluid" alt="image not found"  style="height: 250px;">
 
         </div>
         <!--Grid column-->
@@ -21,7 +22,6 @@
 
           <!--Content-->
           <div class="p-4">
-
             <div class="mb-3">
               <h1>
                 {{ object.tittle }}
@@ -31,12 +31,12 @@
               </a>
 
             <p class="lead">
-              <span>${{ item.price }}</span>
+              <span>${{ object.price }}</span>
             </p>
 
             <p class="lead font-weight-bold">Description</p>
 
-            <p>{{ item.description }}.</p>
+            <p>{{ object.description }}.</p>
 
             <!-- <form class="d-flex justify-content-left">
               Default input
@@ -56,7 +56,7 @@
 
           </div>
           <!--Content-->
-
+          {% endfor %}
         </div>
         <!--Grid column-->
 
@@ -70,6 +70,14 @@
 
         <!--Grid column-->
         <div class="col-md-6 text-center">
+        <div style="margin-bottom: 100px;">
+          <img src="/uploads/star.png" alt="" style="height: 30px;">
+          <img src="/uploads/star.png" alt="" style="height: 30px;">
+          <img src="/uploads/star.png" alt="" style="height: 30px;">
+          <img src="/uploads/star.png" alt="" style="height: 30px;">
+          <img src="/uploads/star.png" alt="" style="height: 30px;">
+        </div>
+
 
           <h4 class="my-4 h4">Additional information</h4>
 
@@ -112,7 +120,62 @@
 
       </div>
       <!--Grid row-->
-
+      <div class="col-xl-12" style="margin-top: 70px;">
+        <h1 style="align-items: center; text-align: center;">
+          Reviews
+        </h1>
+      </div>
+      <div class="col-xl-12" style="align-items: center; text-align: center; margin-top: 100px; width: 70%;">
+        <form action="" method="post">
+          <img class="rounded-circle shadow-1-strong me-3"
+          src="/uploads/profile/default.jpg" alt="avatar" width="65"
+          height="65" style="float: left; "/>
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button name="submit">
+            submit
+          </button>
+        </form>
+      </div>
+    </div>
+    <div style="background-color: #FFFAFA;">
+      <section style="margin-top: 50px;">
+        <div class="container my-5 py-5 text-dark">
+          <div class="row d-flex justify-content-center">
+            <div class="col-md-11 col-lg-9 col-xl-7">
+              {% for objects in comments %}
+              <div class="d-flex flex-start mb-4">
+                <img class="rounded-circle shadow-1-strong me-3"
+                  src="/uploads/profile/default.jpg" alt="avatar" width="65"
+                  height="65" />
+                <div class="card w-100">
+                  <div class="card-body p-4">
+                    <div class="">
+                      <h5>{{ objects.user }}</h5>
+                      <p class="small">{{ objects.date_adedd }}</p>
+                      <p>
+                        {{ objects.body }}
+                      </p>
+      
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                          <!-- <a href="#!" class="link-muted me-2"><i class="fas fa-thumbs-up me-1"></i></a> -->
+                        </div>
+                        <!-- <a href="#!" class="link-muted"><i class="fas fa-reply me-1"></i> Reply</a> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% empty %}
+              <h3 style="align-items: center; text-align: center;">
+                no reviews for this product yet
+              </h3>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
   <!--Main layout-->
