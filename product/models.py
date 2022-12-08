@@ -71,7 +71,7 @@ class Profile(models.Model):
     email = models.EmailField(null=True, blank=True)
     phone = models.DecimalField(decimal_places=0, max_digits=10, null=True, blank=True)
     description = models.CharField(max_length = 300, null= True, blank=True)
-    image = models.ImageField(upload_to='profile/', blank=True, default='/uploads/profile/default.jpg', null=True)
+    image = models.ImageField(upload_to='profile_image/', blank=True, null=True)
 
 
     def __str__(self):
@@ -88,6 +88,7 @@ class Comments(models.Model):
     date_adedd = models.TimeField(auto_now_add=True)
     url = models.URLField(max_length=200)
     likes = models.IntegerField(default=0)
+    image_perfil = models.ImageField(upload_to='profile_image/', blank=True, null=True, default='profile_image/default.jpg')
 
     def __str__(self):
-        return f"comment of {self.user}"
+        return f"comment of {self.user} in {self.url}"

@@ -8,13 +8,25 @@
 <!------ Include the above in your HEAD tag ---------->
 
 <div class="container emp-profile">
+    <div>
+        <form action="/agregar_imagen" method="post" enctype="multipart/form-data"> 
+            {% csrf_token %}
+    
+            {{ image_form.as_p }}
+        
+            <button>
+                submit
+            </button>
+            
+        </form>
+    </div>
             <form method="post">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-4">
                         {% for items in profile %}
                         {% if items.username == user %}
-                        <img style="width: 300px; height: 300px;" src="/uploads/profile/default.jpg" alt="not user image found"/>
+                        <img style="width: 300px; height: 300px;" src="/uploads/{{ items.image }}" alt="not user image found"/>
                         <!-- <img src="/uploads/{{ items.image }}" alt="" id="image"/>
                             <p>{{ profile.image.url }}</p> -->
                     </div>

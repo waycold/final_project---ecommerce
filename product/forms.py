@@ -19,3 +19,9 @@ class comments_form(forms.ModelForm):
         labels = {
             'body': (''),
         }
+
+
+class image_form(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['image']

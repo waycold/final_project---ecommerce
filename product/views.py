@@ -5,7 +5,7 @@ from django.contrib.auth import logout, login, authenticate, get_user_model
 from django.db import IntegrityError
 from django.db.models import Q
 from product.models import Item, OrderItem, Order, Profile, Comments
-from product.forms import profile_edit_form, comments_form
+from product.forms import profile_edit_form, comments_form, image_form
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
@@ -28,6 +28,14 @@ class ItemDetailView(DetailView):
 
 
 def products(request, slug):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+        print('hola')
+    except:
+        image = '/uploads/profile_image/default.jpg'
+        print('si esta aca me jubilo de la vida')
+    qs = Profile.objects.filter(user = request.user)
     input = "-"
     output = " "
     change = str.maketrans(input, output)
@@ -46,18 +54,21 @@ def products(request, slug):
             user = request.user,
             body = request.POST['body'],
             date_adedd = date_adedd,
-            url = request.path
+            url = request.path,
+            image_perfil = image
         )
         context = {
             'items': items,
             'comments': comments,
             'form': comments_form,
+            'url': image
         }
         return render(request, 'product.html', context)
     context = {
         'items': items,
         'comments': comments,
         'form': comments_form,
+        'url': image
     }
     return render(request, 'product.html', context)
 
@@ -65,6 +76,11 @@ def products(request, slug):
 # sign up function
 
 def sign_up(request):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+    except:
+        image = '/uploads/profile_image/default.jpg'
     if request.method == 'GET':
         return render(request, 'signup.html', {
             'form': UserCreationForm})
@@ -81,10 +97,12 @@ def sign_up(request):
             except IntegrityError:
                 return render(request, 'signup.html', {
             'form': UserCreationForm,
-            'error': 'User already exists'})
+            'error': 'User already exists',
+            'url': image})
         return render(request, 'signup.html', {
             'form': UserCreationForm,
-            'error': 'Password do not match'})
+            'error': 'Password do not match',
+            'url': image})
 
 
 # log out function
@@ -97,6 +115,11 @@ def log_out(request):
 # log in function
 
 def log_in(request):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+    except:
+        image = '/uploads/profile_image/default.jpg'
     if request.method == 'GET':
         return render(request, 'login.html',{
         'form': AuthenticationForm})
@@ -105,21 +128,48 @@ def log_in(request):
         if user is None:
             return render(request, 'login.html',{
             'form': AuthenticationForm, 
-            'error': 'User or password is incorrect'})
+            'error': 'User or password is incorrect',
+            'url': image})
         else:
             login(request, user)
             return redirect('/')
 
+def agregar_imagen(request):
+    user = request.user
+    profile = get_object_or_404(Profile, username = user)
+    form = profile_edit_form(instance=profile)
+    if request.method == 'POST':
+        form = image_form(request.POST, request.FILES, instance=profile)
+
+        if form.is_valid:
+            form.save()
+            return redirect('/')
+    else:
+        form = image_form
+
+    return render(request, 'profile.html', {'image_form': image_form})
+
 def about(request):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+    except:
+        image = '/uploads/profile_image/default.jpg'
     context = {
         'items': Item.objects.all(),
         'orderitems': OrderItem.objects.all(),
-        'profile': Profile.objects.all()
+        'profile': Profile.objects.all(),
+        'url': image
     }
     return render(request, 'about.html', context)
 
 
 def store(request):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+    except:
+        image = '/uploads/profile_image/default.jpg'
     order_qs = OrderItem.objects.filter(
         user = request.user,
         ordered = False
@@ -135,43 +185,43 @@ def store(request):
         print(order_qs)
         items = order_qs.delete()
         context = {
-            'orderitems': items
+            'orderitems': items,
+            'url': image
         }
         messages.info(request, "Your purchase has been successful!")
         return redirect ('/')
     context = {
         'items': Item.objects.all(),
         'orderitems': order_qs,
-        'comments': Comments.objects.all()
+        'comments': Comments.objects.all(),
+        'url': image
     }
     return render(request, 'checkout.html', context)
 
 
 def profile(request):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+    except:
+        image = '/uploads/profile_image/default.jpg'
     form = profile_edit_form
-    profile1 = Profile.objects.all()
-    profile2 = Profile.user
-    image_form = request.POST.get("image")
-    if image_form:
-        image_form = profile_edit_form(request.POST, request.FILES , instance=profile)
-        image_form.save()
-        context = {
-            'items': Item.objects.all(),
-            'profile': Profile.objects.all(),
-            'form': form,
-            'image_form': image_form,
-        }
-        return render(request, 'profile.html', context)
     context = {
         'items': Item.objects.all(),
         'profile': Profile.objects.all(),
         'form': form,
         'image_form': image_form,
+        'url': image
         }
     return render(request, 'profile.html', context)
 
 
 def edit_profile(request, username):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+    except:
+        image = '/uploads/profile_image/default.jpg'
     user = request.user
     profile = get_object_or_404(Profile, username = user)
     form = profile_edit_form(instance=profile)
@@ -180,11 +230,12 @@ def edit_profile(request, username):
                 'items': Item.objects.all(),
                 'profile': Profile.objects.all(),
                 'form': form,
+                'url': image
             }
         return render(request, 'edit_profile.html', context)
     else:
         try:
-            form = profile_edit_form(request.POST, request.FILES , instance=profile)
+            form = profile_edit_form(request.POST, request.FILES, instance=profile)
             form.save()
             return redirect("/profile")
         except ValueError:
@@ -194,6 +245,7 @@ def edit_profile(request, username):
                 'items': Item.objects.all(),
                 'profile': Profile.objects.all(),
                 'form': form,
+                'url': image
             }
             return render(request, 'edit_profile.html', context)
 
@@ -259,6 +311,11 @@ def remove_single_cart(request, slug):
         return redirect("product:product", slug=slug)
 
 def home(request):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+    except:
+        image = '/uploads/profile_image/default.jpg'
     qs = request.POST.get("search")
     items = Item.objects.all()
     if qs:
@@ -280,7 +337,8 @@ def home(request):
         )
     context = {
         'items': items,
-        'search': qs
+        'search': qs,
+        'url': image
     }
     return render(request, 'home.html', context)
 
@@ -310,33 +368,6 @@ def remove_from_cart(request, slug):
     else:
         messages.info(request, "You do not have an active order")
         return redirect("product:product", slug=slug)
-
-
-# def delete(request, slug):
-#     item = get_object_or_404(Item, slug=slug)
-#     order_qs = Order.objects.filter(
-#         user=request.user,
-#         ordered=False
-#     )
-#     if order_qs.exists():
-#         order = order_qs[0]
-#         # check if the order item is in the order
-#         if order.items.filter(item__slug=item.slug).exists():
-#             order_item = OrderItem.objects.filter(
-#                 item=item,
-#                 user=request.user,
-#                 ordered=False
-#             )[0]
-#             order.items.remove(order_item)
-#             order_item.delete()
-#             messages.info(request, "This item was removed from your cart.")
-#             return redirect("product:checkout")
-#         else:
-#             messages.info(request, "This item was not in your cart")
-#             return redirect("product:checkout", slug=slug)
-#     else:
-#         messages.info(request, "You do not have an active order")
-#         return redirect("product:checkout", slug=slug)
 
 def delete(request):
     order_qs = OrderItem.objects.filter(

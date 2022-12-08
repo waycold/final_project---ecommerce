@@ -128,7 +128,7 @@
       <div class="col-xl-12" style="align-items: center; text-align: center; margin-top: 100px; width: 70%;">
         <form action="" method="post">
           <img class="rounded-circle shadow-1-strong me-3"
-          src="/uploads/profile/default.jpg" alt="avatar" width="65"
+          src="{{ url }}" alt="not found" width="65"
           height="65" style="float: left; "/>
           {% csrf_token %}
           {{ form.as_p }}
@@ -143,10 +143,11 @@
         <div class="container my-5 py-5 text-dark">
           <div class="row d-flex justify-content-center">
             <div class="col-md-11 col-lg-9 col-xl-7">
+
               {% for objects in comments %}
               <div class="d-flex flex-start mb-4">
                 <img class="rounded-circle shadow-1-strong me-3"
-                  src="/uploads/profile/default.jpg" alt="avatar" width="65"
+                  src="{{ objects.image_perfil }}" alt="avatar" width="65"
                   height="65" />
                 <div class="card w-100">
                   <div class="card-body p-4">
@@ -159,10 +160,16 @@
       
                       <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                          <!-- <a href="#!" class="link-muted me-2"><i class="fas fa-thumbs-up me-1"></i></a> -->
+                          <a href="#!" class="link-muted me-2"><i class="fas fa-thumbs-up me-1"></i></a>
                         </div>
-                        <!-- <a href="#!" class="link-muted"><i class="fas fa-reply me-1"></i> Reply</a> -->
+                        <form action="" method="post">
+                          {% csrf_token %}
+                          <button name="reply" href="#!" class="link-muted"><i class="fas fa-reply me-1"></i> Reply</button>
+                        </form>
                       </div>
+                      {% if "reply" in request.POST %}
+                      {{ form.as_p }}
+                      {% endif %}
                     </div>
                   </div>
                 </div>
