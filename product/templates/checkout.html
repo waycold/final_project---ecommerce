@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% load cart_template_tag %}
 {% block content %}
-
+<body style="
+height: 100%;
+flex-direction: column;">
     <!--Main layout-->
-    <main class="mt-5 pt-4">
+    <main class="mt-5 pt-4" style="min-height: 100vh;
+    flex-direction: column;">
       <div class="container wow fadeIn" style="margin-bottom: 300px;">
         <!-- Heading -->
         <h2 class="my-5 h2 text-center">Your Cart</h2>
@@ -69,13 +72,13 @@
           </div>
           <!--Grid column-->
         <!--Grid row-->
-
+    </main>
     <!--Main layout-->
 
 <!--Footer-->
-<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+<footer class="page-footer text-center font-small mt-2" style="margin-top: auto;">
   <!--Call to action-->
-  <div class="pt-4">
+  <div class="pt-2">
 
   <!--Copyright-->
   <div class="footer-copyright py-3">

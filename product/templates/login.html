@@ -1,34 +1,21 @@
 {% extends 'base.html' %} {% block content %}
 
-<link href="/product/static/css/login.css" rel="stylesheet" />
-<link
-  href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100&display=swap"
-  rel="stylesheet"
-/>
-<link
-  href="https://fonts.googleapis.com/css2?family=Bitter:wght@100&display=swap"
-  rel="stylesheet"
-/>
 
-<div id="logo">
-  <h1 class="logo">Store</h1>
-  <img src="\uploads\1250593.png" alt="" class="img-logo" />
-</div>
-
-<div id="base">
-  <h1>
-    <b>Log in</b>
-  </h1>
-
-  <form action="/login/" method="POST" style="padding: 15px">
-    {% csrf_token %}
-
-    <p style="color: rgb(97, 178, 245)">{{error}}</p>
-
-    {{form.as_p}}
-
-    <button>Log in</button>
-  </form>
+<div class="general-content" id="general-content-signup">
+  <div class="logo">
+    <h1 class="logo-title">Store</h1>
+  </div>
+  
+  <div class="content">
+    <h2 class="content-title">
+      Log in
+    </h2>
+    <form action="/login/" method="POST" class="form">
+      {% csrf_token %} {{form.as_p}}
+  
+      <button class="button-save" id="form-button">log in</button>
+    </form>
+  </div>
 </div>
 
 {% endblock %}

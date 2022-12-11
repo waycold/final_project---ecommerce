@@ -43,6 +43,16 @@ class Item(models.Model):
             'slug': self.slug
         } )
 
+    def get_edit_product_url(self):
+        return reverse("product:edit_product", kwargs={
+            'slug': self.slug
+        } )
+
+    def get_delete_product_url(self):
+        return reverse("product:delete_product", kwargs={
+            'slug': self.slug
+        } )
+
 class OrderItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null= True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)

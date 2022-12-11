@@ -2,14 +2,17 @@
 
 {% block content %}
 
-  <body>
+  <body style="
+    height: 100%;
+    flex-direction: column;">
 
 
 
     <!--/.Carousel Wrapper-->
 
     <!--Main layout-->
-    <main>
+    <main style="min-height: 100vh;
+    flex-direction: column;">
       <div class="container">
         <!--Navbar-->
         <nav
@@ -80,16 +83,16 @@
         <section class="text-center mb-4">
           <!--Grid row-->
 
-          <div class="row wow  fadeIn">
+          <div class="row wow  fadeIn" style="margin-bottom: 30px; padding-bottom: 50px;">
 
             {% for item in items %}
             <!--Grid column-->
-              <a class="col-lg-3 col-md-6 mb-4" href="{{ item.get_absolute_url }}">
+              <a class="col-lg-3 col-md-6 mb-4" href="{{ item.get_absolute_url }}" style="margin-bottom: 30px; padding-bottom: 50px; position: relative;">
                 <!--Card-->
                 <div class="card">
                   <!--Card image-->
-                  <div class="view overlay" style="display: flex; justify-content: center; justify-items: center;">
-                    <img src="/uploads/{{ item.img }}" style="width: 100px; height: 100px;"
+                  <div class="view overlay" style=" justify-content: center; justify-items: center; height: 200px; padding: 0 20px;">
+                    <img src="/uploads/{{ item.img }}" style="width: 100%; height: 100%; object-fit: contain;"
                         alt="not image found">
                       </div>
                       <!--Card image-->
@@ -171,26 +174,26 @@
         {% endif %}
         <!--Pagination-->
       </div>
+      <!--Footer-->
+      
     </main>
     <!--Main layout-->
-    
-    <!--Footer-->
-    <footer class="page-footer text-center font-small mt-4 wow fadeIn">
-      <!--Call to action-->
-      <div class="pt-4">
-
-      <!--Copyright-->
-      <div class="footer-copyright py-3">
-        © 2019 Copyright:
-        <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank">
-          MDBootstrap.com
-        </a>
-      </div>
-      <!--/.Copyright-->
+    <footer class="page-footer text-center font-small mt-2" style="margin-top: auto;">
+              <!--Call to action-->
+              <div class="pt-2">
+        
+              <!--Copyright-->
+              <div class="footer-copyright py-3">
+                © 2019 Copyright:
+                <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank">
+                  MDBootstrap.com
+                </a>
+              </div>
+              <!--/.Copyright-->
     </footer>
-    <!--/.Footer-->
-
-  </body>
+            <!--/.Footer-->
+      
+    </body>
 </html>
 
 

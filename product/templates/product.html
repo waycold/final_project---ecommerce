@@ -53,7 +53,19 @@
             <a href="{{ object.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p">
               Remove from cart
             </a>
-
+            {% if user.is_superuser %}
+            <div>
+              <a href="{{ object.get_edit_product_url }}" class="btn btn-secondary btn-md my-3 p" style="width: min-content;">
+                Edit this product
+              </a>
+              <form action="" method="post" style="width: fit-content; height: fit-content; display: inline;">
+                {% csrf_token %}
+                <button name="delete" class="btn btn-secondary btn-md my-0 p" class="btn btn-secondary btn-md my-3 p" style="width: min-content;">
+                  Delete product
+                </button>
+              </form>
+            </div>
+            {% endif %}
           </div>
           <!--Content-->
           {% endfor %}

@@ -5,7 +5,7 @@ from django.contrib.auth import logout, login, authenticate, get_user_model
 from django.db import IntegrityError
 from django.db.models import Q
 from product.models import Item, OrderItem, Order, Profile, Comments
-from product.forms import profile_edit_form, comments_form, image_form
+from product.forms import profile_edit_form, comments_form, image_form, product_form, edit_product_form
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
@@ -34,20 +34,18 @@ def products(request, slug):
         print('hola')
     except:
         image = '/uploads/profile_image/default.jpg'
-        print('si esta aca me jubilo de la vida')
     qs = Profile.objects.filter(user = request.user)
-    input = "-"
-    output = " "
-    change = str.maketrans(input, output)
-    id = slug
-    modifed_slug = id.translate(change)
-    modifed_slug = modifed_slug.capitalize()
     items = Item.objects.filter(
-        tittle__icontains = modifed_slug
+        slug = slug
     )
     comments = Comments.objects.filter(
         url = request.path
     )
+
+    print("delete" in request.POST)
+    if "delete" in request.POST:
+        items.delete()
+        return redirect('/')
     if "submit" in request.POST:
         date_adedd = timezone.now()
         Comments.objects.create(
@@ -163,6 +161,129 @@ def about(request):
     }
     return render(request, 'about.html', context)
 
+def create_product(request):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+    except:
+        image = '/uploads/profile_image/default.jpg'
+    
+    if request.method == 'POST':
+        form = product_form(request.POST, request.FILES)
+
+        if form.is_valid:
+            title_form = request.POST.get("tittle")
+            input = " "
+            output = "-"
+            change = str.maketrans(input, output)
+            id = title_form
+            modifed_title = id.translate(change)
+            notvalid_title = Item.objects.filter(
+                tittle = title_form
+            )
+            if notvalid_title:
+                messages.info(request, 'That title already exist')
+                context = {
+                    'items': Item.objects.all(),
+                    'orderitems': OrderItem.objects.all(),
+                    'profile': Profile.objects.all(),
+                    'url': image,
+                    'form': form,
+                }
+                return render(request, 'create_product.html', context)
+            form.save()
+            item = Item.objects.filter(
+                tittle = title_form
+            )
+            item.update(
+                slug = modifed_title
+            )
+            return redirect('/')
+    else:
+        form = product_form
+
+    context = {
+        'items': Item.objects.all(),
+        'orderitems': OrderItem.objects.all(),
+        'profile': Profile.objects.all(),
+        'url': image,
+        'form': product_form,
+    }
+    return render(request, 'create_product.html', context)
+
+# --------------------------------------------------------------------------
+
+def edit_product(request, slug):
+    try:
+        profile_image = Profile.objects.filter(username = request.user.id)
+        image = profile_image[0].image.url
+    except:
+        image = '/uploads/profile_image/default.jpg'
+    product = get_object_or_404(Item, slug = slug)
+    form = edit_product_form(instance=product)
+    if request.method == "GET":
+        context = {
+                'items': Item.objects.all(),
+                'profile': Profile.objects.all(),
+                'form': form,
+                'url': image
+            }
+        return render(request, 'edit_product.html', context)
+    else:
+        try:
+            title_form = request.POST.get("tittle")
+            input = " "
+            output = "-"
+            change = str.maketrans(input, output)
+            id = title_form
+            modifed_title = id.translate(change)
+            # transforma el request del titulo en una slug
+            input = " "
+            output = "-"
+            change = str.maketrans(output, input)
+            id = slug
+            slug_title = id.translate(change)
+            notvalid_item = Item.objects.filter(
+                tittle = title_form,
+            )
+            delete_item = Item.objects.filter(
+                tittle = request.POST.get("tittle"),
+                description = request.POST.get("description"),
+                price = request.POST.get("price"),
+                category = request.POST.get("category"),
+                label = request.POST.get("label"),
+            )
+            if notvalid_item and slug_title != title_form:
+                messages.info(request, 'That title already exist')
+                context = {
+                    'items': Item.objects.all(),
+                    'orderitems': OrderItem.objects.all(),
+                    'profile': Profile.objects.all(),
+                    'url': image,
+                    'form': form,
+                }
+                return render(request, 'edit_product.html', context)
+            form = edit_product_form(request.POST, request.FILES, instance=product)
+            form.save()
+            item = Item.objects.filter(
+                tittle = title_form
+            )
+            item.update(
+                slug = modifed_title
+            )
+            return redirect("/")
+        except ValueError:
+            messages.info(request, "Error updating data.")
+
+    context = {
+        'items': Item.objects.all(),
+        'orderitems': OrderItem.objects.all(),
+        'profile': Profile.objects.all(),
+        'url': image,
+        'form': edit_product_form,
+    }
+    return render(request, 'edit_product.html', context)
+
 
 def store(request):
     try:
@@ -182,7 +303,6 @@ def store(request):
         }
         return redirect('/checkout/')
     if "buy" in request.POST and order_qs.count() >= 1:
-        print(order_qs)
         items = order_qs.delete()
         context = {
             'orderitems': items,

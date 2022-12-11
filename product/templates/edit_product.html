@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load cart_template_tag %}
+{% block content %}
+
+
+
+
+
+
+
+<div class="general-content">
+    <div class="content">
+        <h1 class="title">Edit product</h1>
+    </div>
+
+
+    <div class="content-form">
+        <form action="" method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+
+                {{ form.tittle }}
+                {{ form.description }}
+                {{ form.price }}
+                {{ form.category }}
+                {{ form.img }}
+
+
+            
+            <button class="button-save">
+                Save
+            </button>
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock %}

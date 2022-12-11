@@ -24,12 +24,14 @@
     <link href="{% static '/css/mdb.min.css' %}" rel="stylesheet" />
     <!-- Your custom styles (optional) -->
     <link href="{% static '/css/style.min.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static '/css/admin_create.css' %}" />
+    <link href="{% static '/css/log_in.css' %}" rel="stylesheet" />
     <style type="text/css">
       html,
       body,
       header,
       .carousel {
-        height: 60vh;
+        height: 100vh;
       }
 
       @media (max-width: 740px) {
@@ -88,6 +90,11 @@
           <li class="nav-item">
             <a class="nav-link waves-effect" href="/about">About</a>
           </li>
+          {% if user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link waves-effect" href="/create_product">Create a product</a>
+          </li>
+          {% endif %}
         </ul>
 
         <!-- Right -->
