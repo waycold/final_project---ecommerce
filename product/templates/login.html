@@ -10,7 +10,7 @@
     <h2 class="content-title">
       Log in
     </h2>
-    <form action="/login/" method="POST" class="form">
+    <form action="/login/" method="POST" class="form" id="form-signup">
       {% csrf_token %} {{form.as_p}}
   
       <button class="button-save" id="form-button">log in</button>
